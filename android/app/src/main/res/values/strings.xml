@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name"> Nhật Ký Thu Chi</string>
+    <string name="title_activity_main"> Nhật Ký Thu Chi</string>
+    <string name="package_name">com.nhatkythuchi.app</string>
+    <string name="custom_url_scheme">com.nhatkythuchi.app</string>
+</resources>

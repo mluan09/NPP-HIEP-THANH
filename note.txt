@@ -1,0 +1,2 @@
+Sử dụng tài khoản chu@example.com hoặc ctv@example.com với mật khẩu 123456.
+Thử tích chọn "Ghi nhớ đăng nhập", sau đó đóng tab và mở lại để thấy tính năng hoạt động.
