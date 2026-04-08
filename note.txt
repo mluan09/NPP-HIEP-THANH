@@ -8,5 +8,7 @@ Ver 1.1.1 (Update 08/04/2026 - 13h07)
 	- Điều chỉnh thông báo xoay ngang trên điện thoại
 Ver 1.1.2 (Update 08/04/2026 - 13h16)
 	- Điều chỉnh bảng thông báo xoay ngang trên điện thoại
-Ver 1.1.3 (Update 08/04/2026 - )
+Ver 1.1.3 (Update 08/04/2026 - 23h21)
 	- Điều chỉnh bảng thông báo xoay ngang trên điện thoại (Code lại)
+Ver 1.1.4 (Update 08/04/2026 - 23h38)
+	- Điều chỉnh bảng thông báo xoay ngang trên điện thoại và chức năng không cho thao tác
