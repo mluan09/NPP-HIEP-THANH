@@ -6,3 +6,5 @@ Ver 1.1 (Update 08/04/2026 - 13h05)
 	- Thêm chức năng yêu cầu xoay ngang khi sử dụng web điện thoại
 Ver 1.1.1 (Update 08/04/2026 - 13h07)
 	- Điều chỉnh thông báo xoay ngang trên điện thoại
+Ver 1.1.2 (Update 08/04/2026 - 13h16)
+	- Điều chỉnh bảng thông báo xoay ngang trên điện thoại
