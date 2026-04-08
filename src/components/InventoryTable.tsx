@@ -5,6 +5,7 @@ import { useLog } from '../context/LogContext';
 import { useAuth } from '../context/AuthContext';
 import { useDialog } from '../context/DialogContext';
 import TablePagination from './TablePagination';
+import CustomSelect from './CustomSelect';
 
 const InventoryTable: React.FC = () => {
   const { data: inventory, loading, addRow, updateRow, deleteRow } = useSupabaseTable<InventoryItem>('inventory');
@@ -96,14 +97,14 @@ const InventoryTable: React.FC = () => {
   };
 
   const startEdit = async (item: InventoryItem) => {
-    if (profile?.role !== 'owner') return showAlert('Bạn không có quyền sửa hàng hoá.');
+    if (profile?.role !== 'owner' && profile?.role !== 'dev') return showAlert('Bạn không có quyền sửa hàng hoá.');
     setEditingId(item.id);
     setFormData(item);
     setIsFormOpen(true);
   };
 
   const handleDelete = async (id: number, name: string) => {
-    if (profile?.role !== 'owner') return showAlert('Bạn không có quyền xoá hàng hoá.');
+    if (profile?.role !== 'owner' && profile?.role !== 'dev') return showAlert('Bạn không có quyền xoá hàng hoá.');
     const itemToDelete = inventory.find(i => i.id === id);
     const confirmed = await showConfirm(`Bạn có chắc chắn muốn xoá mặt hàng "${name}" không?`);
     if (confirmed) {
@@ -131,7 +132,7 @@ const InventoryTable: React.FC = () => {
       <div className="content-card glass p-6">
         <div className="inline-form-head flex justify-between items-center mb-6">
           <h3>Danh mục hàng hóa</h3>
-          {profile?.role === 'owner' && (
+          {(profile?.role === 'owner' || profile?.role === 'dev') && (
             <button 
               id="showAddInventoryBtn" 
               className="btn btn-primary btn-sm"
@@ -159,15 +160,11 @@ const InventoryTable: React.FC = () => {
                 </div>
                 <div className="field">
                   <label>ĐVT</label>
-                  <select 
-                    id="itemUnitInput"
-                    value={formData.unit}
-                    onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
-                  >
-                    <option value="Thùng">Thùng</option>
-                    <option value="Két">Két</option>
-                    <option value="Chai">Chai</option>
-                  </select>
+                  <CustomSelect 
+                    value={formData.unit || ''} 
+                    options={['Thùng', 'Két', 'Chai']} 
+                    onChange={(val) => setFormData({ ...formData, unit: val })}
+                  />
                 </div>
                 <div className="field">
                   <label>Đơn giá</label>
@@ -251,7 +248,7 @@ const InventoryTable: React.FC = () => {
                       <td className="cell-center">{closingQty}</td>
                       <td className="cell-right">{formatCurrency(closingQty * item.price)}</td>
                       <td>
-                        {(profile?.role === 'owner' || item.created_by === profile?.id) && (
+                        {(profile?.role === 'owner' || profile?.role === 'dev' || item.created_by === profile?.id) && (
                           <div className="row-actions">
                             <button className="btn btn-warning btn-xs" onClick={() => startEdit(item)}>Sửa</button>
                             <button className="btn btn-danger btn-xs" onClick={() => handleDelete(item.id, item.name)}>Xoá</button>

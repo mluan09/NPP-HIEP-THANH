@@ -10,6 +10,7 @@ import { useSupabaseTable } from '../hooks/useSupabaseTable';
 import { DailySaleRow, DebtRow } from '../types';
 import { Tabs, TabsContent } from '@/components/animate-ui/components/radix/tabs';
 import Footer from '../components/Footer';
+import OrientationLock from '../components/OrientationLock';
 
 const tabOrder = ['inventory', 'sales', 'debt', 'cashbook'] as const;
 type TabId = (typeof tabOrder)[number];
@@ -50,6 +51,7 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div id="dashboard" className="dashboard">
+      <OrientationLock />
       <TopNavbar 
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 

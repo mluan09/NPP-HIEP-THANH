@@ -180,7 +180,7 @@ const CashbookTable: React.FC = () => {
                       <td className="cell-right text-success">{row.income ? formatCurrency(row.income) : ''}</td>
                       <td className="cell-right text-danger">{totalExpense ? formatCurrency(totalExpense) : ''}</td>
                       <td>
-                        {(profile?.role === 'owner' || row.created_by === profile?.id) && (
+                        {(profile?.role === 'owner' || profile?.role === 'dev' || row.created_by === profile?.id) && (
                           <div className="row-actions">
                             <button className="btn btn-warning btn-xs" onClick={() => startEdit(row)}>Sửa</button>
                             <button className="btn btn-danger btn-xs" onClick={() => handleDelete(row.id, row.description)}>Xoá</button>

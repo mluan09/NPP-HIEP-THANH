@@ -79,7 +79,7 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ activeTab, setActiveTab, mobileMe
             }}
             className={`nav-btn ${activeTab === item.id ? 'active' : ''}`}
             onClick={() => {
-              if (item.id === 'sales') {
+              if (item.id === 'sales' && profile?.role !== 'dev') {
                 showAlert('Tính năng Báo cáo bán hàng hiện chưa thể hoạt động, đang trong thời gian điều chỉnh.', 'Thông báo');
                 return;
               }
@@ -97,7 +97,9 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ activeTab, setActiveTab, mobileMe
           <div className="user-avatar"><img src="/assets/logo.png" alt="User" className="user-logo-img" /></div>
           <div className="user-info">
             <strong id="currentUserName">{profile?.full_name || profile?.name || profile?.email}</strong>
-            <p id="userRoleText">{profile?.role === 'owner' ? 'Chủ' : 'Cộng Tác Viên'}</p>
+            <p id="userRoleText">
+              {profile?.role === 'owner' ? 'Chủ' : profile?.role === 'dev' ? 'Developer' : 'Cộng Tác Viên'}
+            </p>
           </div>
         </div>
         <button id="logoutBtn" onClick={handleLogout} className="btn btn-outline btn-sm">Thoát</button>

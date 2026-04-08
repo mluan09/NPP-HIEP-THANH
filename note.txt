@@ -1,2 +1,6 @@
-Sử dụng tài khoản chu@example.com hoặc ctv@example.com với mật khẩu 123456.
-Thử tích chọn "Ghi nhớ đăng nhập", sau đó đóng tab và mở lại để thấy tính năng hoạt động.
+Ver 1.1 (Dự kiến update 23h59 08/04/2026)
+	- Add quyền Dev (Supabase)
+	- Định danh vai trò dev trong nhật ký hoạt động
+	- Nâng cấp nút báo cáo lỗi cho dev
+	- Thêm hiệu ứng cho nút chọn ĐVT
+	- Thêm chức năng yêu cầu xoay ngang khi sử dụng web điện thoại

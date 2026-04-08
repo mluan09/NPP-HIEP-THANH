@@ -55,7 +55,7 @@ export interface UserProfile {
   email: string;
   name: string;
   full_name?: string;
-  role: 'owner' | 'ctv';
+  role: 'owner' | 'ctv' | 'dev';
 }
 
 export type UndoActionType = 'add' | 'edit' | 'delete';
@@ -80,7 +80,9 @@ export interface LogEntry {
   user_id: string;
   profiles?: {
     name: string;
+    role: string;
   } | {
     name: string;
+    role: string;
   }[];
 }

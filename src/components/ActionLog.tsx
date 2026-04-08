@@ -45,9 +45,9 @@ const ActionLog: React.FC<ActionLogProps> = ({ tableName }) => {
               </tr>
             ) : (
               filteredLogs.map((log) => {
-                const isOwner = profile?.role === 'owner';
+                const isFullAccess = profile?.role === 'owner' || profile?.role === 'dev';
                 const isMyAction = log.user_id === profile?.id;
-                const canUndo = (isOwner || isMyAction) && log.undo_data && !log.undone;
+                const canUndo = (isFullAccess || isMyAction) && log.undo_data && !log.undone;
                 
                 return (
                   <tr key={log.id}>
@@ -55,7 +55,19 @@ const ActionLog: React.FC<ActionLogProps> = ({ tableName }) => {
                       {new Date(log.created_at).toLocaleString('vi-VN')}
                     </td>
                     <td data-label="Người thực hiện" className="cell-center font-bold">
-                      {Array.isArray(log.profiles) ? (log.profiles[0]?.name || 'Hệ thống') : (log.profiles?.name || 'Hệ thống')}
+                      {(() => {
+                        const profiles = Array.isArray(log.profiles) ? log.profiles : [log.profiles];
+                        const mainProfile = profiles[0];
+                        if (!mainProfile) return 'Hệ thống';
+                        return (
+                          <span>
+                            {mainProfile.name}
+                            {mainProfile.role === 'dev' && (
+                              <span className="text-blue-500 ml-1 text-[10px] font-normal opacity-80">( Developer )</span>
+                            )}
+                          </span>
+                        );
+                      })()}
                     </td>
                     <td data-label="Loại thao tác" className="cell-center">
                       {log.type}

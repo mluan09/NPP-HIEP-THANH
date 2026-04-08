@@ -95,14 +95,14 @@ const SalesTable: React.FC<SalesTableProps> = ({ data: propData, loading: propLo
   };
 
   const startEdit = (item: DailySaleRow) => {
-    if (profile?.role !== 'owner') return showAlert('Bạn không có quyền sửa báo cáo.');
+    if (profile?.role !== 'owner' && profile?.role !== 'dev') return showAlert('Bạn không có quyền sửa báo cáo.');
     setEditingId(item.id);
     setFormData(item);
     setIsFormOpen(true);
   };
 
   const handleDelete = async (id: number, customer: string) => {
-    if (profile?.role !== 'owner') return showAlert('Bạn không có quyền xoá báo cáo.');
+    if (profile?.role !== 'owner' && profile?.role !== 'dev') return showAlert('Bạn không có quyền xoá báo cáo.');
     const itemToDelete = sales.find(i => i.id === id);
     const confirmed = await showConfirm(`Bạn có chắc chắn muốn xoá báo cáo của "${customer}" không?`);
     if (confirmed) {
@@ -128,7 +128,7 @@ const SalesTable: React.FC<SalesTableProps> = ({ data: propData, loading: propLo
       <div className="content-card glass p-6">
         <div className="inline-form-head flex justify-between items-center mb-6">
           <h3>Báo cáo bán hàng</h3>
-          {profile?.role === 'owner' && (
+          {(profile?.role === 'owner' || profile?.role === 'dev') && (
             <button 
               className="btn btn-primary btn-sm"
               onClick={() => { setIsFormOpen(!isFormOpen); if(!isFormOpen) setEditingId(null); }}
@@ -234,7 +234,7 @@ const SalesTable: React.FC<SalesTableProps> = ({ data: propData, loading: propLo
                       <td className="cell-right">{formatCurrency(baseCost)}</td>
                       <td className="cell-right cell-profit">{formatCurrency(profit)}</td>
                       <td>
-                        {(profile?.role === 'owner' || row.created_by === profile?.id) && (
+                        {(profile?.role === 'owner' || profile?.role === 'dev' || row.created_by === profile?.id) && (
                           <div className="row-actions">
                             <button className="btn btn-warning btn-xs" onClick={() => startEdit(row)}>Sửa</button>
                             <button className="btn btn-danger btn-xs" onClick={() => handleDelete(row.id, row.customer)}>Xoá</button>

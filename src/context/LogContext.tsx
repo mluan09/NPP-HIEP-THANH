@@ -21,7 +21,7 @@ export const LogProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setLoading(true);
     const { data, error } = await supabase
       .from('action_logs')
-      .select('*, profiles:user_id(name)')
+      .select('*, profiles:user_id(name, role)')
       .order('created_at', { ascending: false })
       .limit(20);
 
@@ -79,7 +79,7 @@ export const LogProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const { data: { user } } = await supabase.auth.getUser();
     const { data: profile } = await supabase.from('profiles').select('role').eq('id', user?.id).single();
     
-    if (profile?.role !== 'owner' && log.user_id !== user?.id) {
+    if (profile?.role !== 'owner' && profile?.role !== 'dev' && log.user_id !== user?.id) {
       showNotification('Bạn chỉ có thể hoàn tác hành động của chính mình!', 'error');
       return;
     }
