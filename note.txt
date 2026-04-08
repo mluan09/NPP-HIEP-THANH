@@ -1,6 +1,8 @@
-Ver 1.1 (Dự kiến update 23h59 08/04/2026)
+Ver 1.1 (Update 08/04/2026 - 13h05)
 	- Add quyền Dev (Supabase)
 	- Định danh vai trò dev trong nhật ký hoạt động
 	- Nâng cấp nút báo cáo lỗi cho dev
 	- Thêm hiệu ứng cho nút chọn ĐVT
 	- Thêm chức năng yêu cầu xoay ngang khi sử dụng web điện thoại
+Ver 1.1.1 (Update 08/04/2026 - 13h07)
+	- Điều chỉnh thông báo xoay ngang trên điện thoại

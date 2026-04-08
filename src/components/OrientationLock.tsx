@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RotateCw, Smartphone } from 'lucide-react';
+import { RotateCw, Smartphone, ShieldAlert } from 'lucide-react';
 
 const OrientationLock: React.FC = () => {
   const [isPortrait, setIsPortrait] = useState(false);
@@ -42,72 +42,73 @@ const OrientationLock: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[10000] flex flex-col items-center justify-center p-6 bg-slate-900/40 backdrop-blur-3xl"
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-2xl touch-none select-none"
+          onPointerDown={(e) => e.stopPropagation()}
         >
-          <div className="max-w-xs w-full text-center space-y-8">
-            <div className="relative flex justify-center">
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.5, ease: "easeOut" }}
-                className="relative"
-              >
-                {/* Background Glow */}
-                <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full" />
-                
-                {/* Smartphone Icon */}
+          <motion.div
+            initial={{ scale: 0.9, y: 20, opacity: 0 }}
+            animate={{ scale: 1, y: 0, opacity: 1 }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="relative max-w-sm w-full bg-white/5 border border-white/10 rounded-[2.5rem] p-8 text-center shadow-[0_0_80px_-15px_rgba(59,130,246,0.5)] overflow-hidden"
+          >
+            {/* Background decorative elements */}
+            <div className="absolute -top-24 -left-24 w-48 h-48 bg-blue-500/20 blur-[80px] rounded-full" />
+            <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-purple-500/20 blur-[80px] rounded-full" />
+
+            <div className="relative space-y-8">
+              {/* Alert Icon */}
+              <div className="flex justify-center">
+                <div className="bg-blue-500/20 p-3 rounded-2xl border border-blue-500/30">
+                  <ShieldAlert className="w-6 h-6 text-blue-400" />
+                </div>
+              </div>
+
+              {/* Animation Container */}
+              <div className="relative flex justify-center py-4">
                 <motion.div
                   animate={{ 
                     rotate: [0, 90, 90, 0],
                   }}
                   transition={{ 
-                    duration: 3, 
+                    duration: 4, 
                     repeat: Infinity, 
                     ease: "easeInOut",
                     times: [0, 0.4, 0.6, 1]
                   }}
-                  className="relative bg-white/10 p-8 rounded-[3rem] border border-white/20 shadow-2xl backdrop-blur-md"
+                  className="relative bg-gradient-to-br from-white/10 to-white/5 p-10 rounded-[2.5rem] border border-white/20 shadow-2xl"
                 >
-                  <Smartphone className="w-24 h-24 text-white" strokeWidth={1} />
+                  <Smartphone className="w-20 h-20 text-white" strokeWidth={1} />
                 </motion.div>
 
-                {/* Rotating Indicator */}
                 <motion.div
                   animate={{ rotate: 360 }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                  className="absolute -top-4 -right-4 bg-blue-500 p-3 rounded-full shadow-lg shadow-blue-500/50 border-2 border-white/20"
+                  transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                  className="absolute -top-2 -right-2 bg-blue-600 p-4 rounded-full shadow-2xl shadow-blue-600/50 border-2 border-white/20"
                 >
                   <RotateCw className="w-6 h-6 text-white" />
                 </motion.div>
-              </motion.div>
-            </div>
+              </div>
 
-            <div className="space-y-4">
-              <motion.h2 
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="text-2xl font-black text-white uppercase tracking-tight"
-              >
-                Vui lòng xoay ngang
-              </motion.h2>
-              <motion.p 
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="text-slate-300 text-sm font-medium leading-relaxed"
-              >
-                Hệ thống NPP Hiệp Thành hoạt động tốt nhất ở chế độ nằm ngang trên thiết bị di động.
-              </motion.p>
-            </div>
+              {/* Text Content */}
+              <div className="space-y-4">
+                <h2 className="text-3xl font-black text-white leading-none tracking-tight">
+                  VUI LÒNG <br/>
+                  <span className="text-blue-400">XOAY NGANG</span>
+                </h2>
+                <p className="text-slate-400 text-base font-medium leading-relaxed">
+                  Để bảo vệ tính toàn vẹn của dữ liệu và hiển thị đầy đủ các cột báo cáo, ứng dụng yêu cầu chế độ nằm ngang.
+                </p>
+              </div>
 
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-              className="h-1 w-24 bg-gradient-to-r from-transparent via-blue-500 to-transparent mx-auto rounded-full"
-            />
-          </div>
+              {/* Status Indicator */}
+              <div className="pt-4">
+                <div className="flex items-center justify-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-[0.2em]">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+                  Đang đợi thiết bị xoay...
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
