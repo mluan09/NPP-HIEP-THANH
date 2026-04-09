@@ -166,32 +166,32 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ activeTab, setActiveTab, mobileMe
                   animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, y: 10, scale: 0.95, filter: 'blur(5px)' }}
                   transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                  className="absolute right-0 mt-3 w-60 bg-white/80 backdrop-blur-2xl border border-white/70 shadow-[0_10px_40px_rgba(0,0,0,0.08)] rounded-2xl p-1.5 z-50 flex flex-col gap-1"
+                  className="absolute right-0 mt-3 w-60 bg-slate-800/95 backdrop-blur-2xl shadow-[0_15px_40px_rgba(0,0,0,0.4)] rounded-2xl p-1.5 z-50 flex flex-col gap-1 border border-slate-700/50"
                 >
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
+                    whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,255,255,0.1)' }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => { setDropdownOpen(false); setBugModalOpen(true); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white hover:shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-all group"
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all group"
                   >
-                    <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-colors duration-300">
+                    <div className="w-8 h-8 rounded-full bg-slate-700/50 text-blue-400 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-colors duration-300">
                       <Bug size={16} />
                     </div>
-                    <span className="font-semibold text-slate-700 text-[14px]">Báo cáo lỗi</span>
+                    <span className="font-semibold text-slate-200 text-[14px] group-hover:text-white transition-colors">Báo cáo lỗi</span>
                   </motion.button>
                   
-                  <div className="h-[1px] bg-slate-200/50 mx-2 my-0.5"></div>
+                  <div className="h-[1px] bg-slate-600/50 mx-3 my-0.5" />
                   
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
+                    whileHover={{ scale: 1.02, backgroundColor: 'rgba(255,255,255,0.1)' }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => { setDropdownOpen(false); handleLogout(); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-50 hover:shadow-[0_2px_10px_rgba(239,68,68,0.1)] transition-all group"
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all group"
                   >
-                    <div className="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors duration-300">
+                    <div className="w-8 h-8 rounded-full bg-slate-700/50 text-red-500 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-colors duration-300">
                       <LogOut size={16} />
                     </div>
-                    <span className="font-semibold text-red-600 text-[14px]">Đăng xuất</span>
+                    <span className="font-semibold text-slate-200 text-[14px] group-hover:text-white transition-colors">Đăng xuất</span>
                   </motion.button>
                 </motion.div>
               )}
@@ -246,12 +246,12 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ activeTab, setActiveTab, mobileMe
                     whileHover={{ scale: 1.02, y: -2 }} 
                     whileTap={{ scale: 0.98 }}
                     onClick={(e) => handleEmailClick(e, contactConfig.email)} 
-                    className="group relative w-full flex items-center justify-between px-5 py-4 bg-white hover:bg-red-50/50 border border-slate-100 hover:border-red-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+                    className="group relative w-full flex items-center justify-between px-5 py-3 bg-white hover:bg-red-50/50 border-2 border-slate-100 hover:border-red-200 rounded-full shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="flex items-center gap-4 relative z-10">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-red-400 to-red-600 text-white flex items-center justify-center shadow-lg shadow-red-500/30 group-hover:scale-110 transition-transform duration-300"><Mail size={18} /></div>
-                      <span className="font-bold text-[15px] text-slate-700 group-hover:text-red-700 transition-colors">Gửi qua Gmail</span>
+                    <div className="flex items-center gap-4 relative z-10 w-full">
+                      <div className="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-red-400 to-red-600 text-white flex items-center justify-center shadow-lg shadow-red-500/30 group-hover:scale-110 transition-transform duration-300"><Mail size={18} /></div>
+                      <span className="font-bold text-[15px] text-slate-700 group-hover:text-red-700 transition-colors flex-1 text-left">Gửi qua Gmail</span>
                     </div>
                   </motion.button>
 
@@ -259,14 +259,14 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ activeTab, setActiveTab, mobileMe
                     whileHover={{ scale: 1.02, y: -2 }} 
                     whileTap={{ scale: 0.98 }}
                     onClick={() => window.open(contactConfig.facebook, '_blank')} 
-                    className="group relative w-full flex items-center justify-between px-5 py-4 bg-white hover:bg-blue-50/50 border border-slate-100 hover:border-blue-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+                    className="group relative w-full flex items-center justify-between px-5 py-3 bg-white hover:bg-blue-50/50 border-2 border-slate-100 hover:border-blue-200 rounded-full shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="flex items-center gap-4 relative z-10">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 text-white flex items-center justify-center shadow-lg shadow-blue-600/30 group-hover:scale-110 transition-transform duration-300">
+                    <div className="flex items-center gap-4 relative z-10 w-full">
+                      <div className="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 text-white flex items-center justify-center shadow-lg shadow-blue-600/30 group-hover:scale-110 transition-transform duration-300">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
                       </div>
-                      <span className="font-bold text-[15px] text-slate-700 group-hover:text-blue-700 transition-colors">Nhắn tin Facebook</span>
+                      <span className="font-bold text-[15px] text-slate-700 group-hover:text-blue-700 transition-colors flex-1 text-left">Nhắn tin Facebook</span>
                     </div>
                   </motion.button>
 
@@ -274,12 +274,12 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ activeTab, setActiveTab, mobileMe
                     whileHover={{ scale: 1.02, y: -2 }} 
                     whileTap={{ scale: 0.98 }}
                     onClick={() => window.open(contactConfig.zaloLink, '_blank')} 
-                    className="group relative w-full flex items-center justify-between px-5 py-4 bg-white hover:bg-indigo-50/50 border border-slate-100 hover:border-indigo-200 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
+                    className="group relative w-full flex items-center justify-between px-5 py-3 bg-white hover:bg-indigo-50/50 border-2 border-slate-100 hover:border-indigo-200 rounded-full shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden"
                   >
                     <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    <div className="flex items-center gap-4 relative z-10">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 text-white flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:scale-110 transition-transform duration-300"><MessageCircle size={18} /></div>
-                      <span className="font-bold text-[15px] text-slate-700 group-hover:text-indigo-700 transition-colors">Liên hệ Zalo</span>
+                    <div className="flex items-center gap-4 relative z-10 w-full">
+                      <div className="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 text-white flex items-center justify-center shadow-lg shadow-indigo-500/30 group-hover:scale-110 transition-transform duration-300"><MessageCircle size={18} /></div>
+                      <span className="font-bold text-[15px] text-slate-700 group-hover:text-indigo-700 transition-colors flex-1 text-left">Liên hệ Zalo</span>
                     </div>
                   </motion.button>
                 </div>
@@ -289,7 +289,7 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ activeTab, setActiveTab, mobileMe
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setBugModalOpen(false)} 
-                    className="px-8 py-2.5 rounded-full bg-slate-100/80 hover:bg-slate-200 text-slate-600 outline-none text-sm font-bold shadow-sm transition-colors border border-slate-200/50"
+                    className="px-10 py-3 rounded-full bg-slate-100/80 hover:bg-slate-200 text-slate-600 outline-none text-sm font-bold shadow-sm transition-colors border-2 border-slate-200/50"
                   >
                     Đóng lại
                   </motion.button>
