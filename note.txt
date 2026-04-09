@@ -15,3 +15,7 @@ Ver 1.1.4 (Update 08/04/2026 - 23h38)
 Ver1.2 (Update 09/04/2026)
 	- Cập nhật thông tin liên hệ
 	- Điều chỉnh UI website điện thoại
+Ver1.2.1 (Update 09/04/2026)
+	- Điều chỉnh chữ note ở màn hình login
+	- Xoá đi nút nhỏ của báo cáo lỗi
+	- Thêm chức năng khi bấm vào phần tên profile của mình sẽ kéo xuống 1 hàng để lựa chọn

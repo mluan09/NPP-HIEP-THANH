@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Footer from '../components/Footer';
 import { supabase } from '../lib/supabase';
 import { useNotification } from '../context/NotificationContext';
 
@@ -71,11 +70,10 @@ const LoginPage: React.FC = () => {
             <button id="loginBtn" type="submit" className="btn btn-primary full py-3" disabled={loading}>
               {loading ? 'ĐANG XỬ LÝ...' : 'ĐĂNG NHẬP HỆ THỐNG'}
             </button>
-            <p className="muted text-center mt-3 text-xs">Liên hệ quản trị viên nếu quên mật khẩu</p>
+            <p className="muted text-center mt-3 text-xs">Liên Hệ Dev hoặc Chủ để tạo tài khoản và khôi phục mật khẩu</p>
           </form>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };
