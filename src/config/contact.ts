@@ -4,8 +4,8 @@
  */
 
 export const contactConfig = {
-  email: "contact@hiepthanh.com", // Địa chỉ email nhận góp ý
-  facebook: "https://facebook.com/npphiepthanh", // Link trang cá nhân hoặc fanpage Facebook
-  zalo: "0912345678", // Số điện thoại Zalo
-  zaloLink: "https://zalo.me/0912345678", // Link chat Zalo trực tiếp
+  email: "minhluanlethien09@gmail.com", // Địa chỉ email nhận góp ý
+  facebook: "https://www.facebook.com/le.thien.minh.luan", // Link trang cá nhân hoặc fanpage Facebook
+  zalo: "0969696769", // Số điện thoại Zalo
+  zaloLink: "https://zalo.me/0969696769", // Link chat Zalo trực tiếp
 };
