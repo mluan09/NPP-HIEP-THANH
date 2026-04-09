@@ -138,7 +138,7 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ activeTab, setActiveTab, mobileMe
         <div className="navbar-right">
           <div className="user-chip-wrapper relative" ref={dropdownRef}>
             <div 
-              className="user-chip cursor-pointer hover:bg-white/50 transition-colors hidden-sm flex items-center pr-2" 
+              className="user-chip cursor-pointer hover:bg-white/50 transition-colors flex items-center pr-2" 
               onClick={() => setDropdownOpen(!dropdownOpen)}
             >
               <div className="user-avatar"><img src="/assets/logo.png" alt="User" className="user-logo-img" /></div>
@@ -149,14 +149,6 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ activeTab, setActiveTab, mobileMe
                 </p>
               </div>
               <ChevronDown size={14} className={`ml-2 text-slate-500 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
-            </div>
-
-            {/* Mobile simplified trigger */}
-            <div 
-              className="user-chip cursor-pointer md:hidden flex items-center pl-2 pr-2" 
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-            >
-              <div className="user-avatar m-0 !w-8 !h-8"><img src="/assets/logo.png" alt="User" className="user-logo-img" /></div>
             </div>
 
             <AnimatePresence>
