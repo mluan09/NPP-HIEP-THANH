@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Smartphone, RotateCw } from 'lucide-react';
 
@@ -35,11 +36,33 @@ const OrientationLock: React.FC = () => {
   // Only show if it's a mobile device in portrait mode
   const showLock = isMobile && isPortrait;
 
-  return (
+  useEffect(() => {
+    if (showLock) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+    };
+  }, [showLock]);
+
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
     <AnimatePresence>
       {showLock && (
         <div className="dialog-overlay"
-          style={{ pointerEvents: 'auto', touchAction: 'none' }}
+          style={{ pointerEvents: 'auto', touchAction: 'none', zIndex: 999999 }}
           onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); }}
           onPointerMove={(e) => { e.preventDefault(); e.stopPropagation(); }}
           onPointerUp={(e) => { e.preventDefault(); e.stopPropagation(); }}
@@ -64,7 +87,7 @@ const OrientationLock: React.FC = () => {
           >
             <div className="dialog-modal-decor" />
             
-            <div className="dialog-icon-wrap" style={{ background: '#dbeafe', color: '#3b82f6' }}>
+            <div className="dialog-icon-wrap" style={{ background: '#fef3c7', color: '#f59e0b' }}>
               <motion.div
                 animate={{ rotate: [0, 90, 90, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -85,7 +108,8 @@ const OrientationLock: React.FC = () => {
           </motion.div>
         </div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };
 
