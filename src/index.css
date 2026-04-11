@@ -1949,3 +1949,92 @@ tfoot td {
 .animate-pulse-soft {
   animation: pulse-soft 2s infinite ease-in-out;
 }
+
+/* ========= Improvement #10: Skeleton Loading ========= */
+@keyframes skeleton-shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.skeleton-cell {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 800px 100%;
+  animation: skeleton-shimmer 1.6s infinite linear;
+  border-radius: 6px;
+  width: 100%;
+}
+
+.skeleton-row td {
+  padding: 10px 12px !important;
+}
+
+/* ========= Improvement #7: Date Filter Bar ========= */
+.date-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: rgba(241, 245, 249, 0.7);
+  border-radius: 14px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.date-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.date-filter-group label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  white-space: nowrap;
+  margin-bottom: 0;
+}
+
+.date-filter-input {
+  padding: 7px 10px !important;
+  border-radius: 10px !important;
+  font-size: 13px !important;
+  width: auto !important;
+  min-width: 130px;
+  background: white !important;
+  border: 1px solid rgba(148, 163, 184, 0.3) !important;
+  cursor: pointer;
+}
+
+.date-filter-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  padding: 5px 10px;
+  background: rgba(29, 78, 216, 0.08);
+  border-radius: 8px;
+  color: var(--primary);
+}
+
+/* ========= Improvement #9: Running Balance ========= */
+.date-filter-balance {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 5px 12px;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.balance-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.balance-value {
+  font-size: 14px;
+  font-weight: 800;
+}

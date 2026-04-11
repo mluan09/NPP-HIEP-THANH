@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useCallback, useEffect } fr
 import { LogEntry, UndoData } from '../types';
 import { supabase } from '../lib/supabase';
 import { useNotification } from './NotificationContext';
+import { useAuth } from './AuthContext';
 
 interface LogContextType {
   actionLogs: LogEntry[];
@@ -16,6 +17,8 @@ export const LogProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [actionLogs, setActionLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const { showNotification } = useNotification();
+  // Improvement #5: Lấy user/profile từ AuthContext thay vì gọi supabase.auth.getUser() mỗi lần
+  const { user, profile } = useAuth();
 
   const fetchLogs = useCallback(async () => {
     setLoading(true);
@@ -50,7 +53,7 @@ export const LogProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [fetchLogs]);
 
   const addLog = useCallback(async (type: string, content: string, status: 'success' | 'error', tableName: string, undoData?: UndoData) => {
-    const { data: { user } } = await supabase.auth.getUser();
+    // Improvement #5: Dùng user từ AuthContext, không cần gọi API thêm
     const user_id = user?.id;
 
     const newLog = {
@@ -69,16 +72,13 @@ export const LogProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } else {
        await fetchLogs();
     }
-  }, [fetchLogs]);
+  }, [fetchLogs, user]);
 
   const undoAction = useCallback(async (logId: string) => {
     const log = actionLogs.find((l) => l.id === logId);
     if (!log || log.undone || !log.undo_data) return;
 
-    // Verify ownership: Owner can undo everything, others can only undo self
-    const { data: { user } } = await supabase.auth.getUser();
-    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user?.id).single();
-    
+    // Improvement #5: Dùng profile từ AuthContext thay vì fetch từ Supabase
     if (profile?.role !== 'owner' && profile?.role !== 'dev' && log.user_id !== user?.id) {
       showNotification('Bạn chỉ có thể hoàn tác hành động của chính mình!', 'error');
       return;
@@ -109,7 +109,6 @@ export const LogProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       }
 
       if (success) {
-        // Cập nhật trạng thái undone của log này trên Supabase
         const { error: updateLogError } = await supabase
           .from('action_logs')
           .update({ undone: true })
@@ -117,7 +116,6 @@ export const LogProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
         if (updateLogError) throw updateLogError;
 
-        // Thêm một log mới báo là đã hoàn tác
         await addLog('Hoàn tác', detail, 'success', 'action_logs');
         showNotification('Hoàn tác thành công!', 'success');
       }
@@ -125,7 +123,7 @@ export const LogProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       showNotification('Lỗi khi hoàn tác: ' + error.message, 'error');
       await addLog('Hoàn tác', 'Lỗi: ' + error.message, 'error', 'action_logs');
     }
-  }, [actionLogs, addLog, showNotification]);
+  }, [actionLogs, addLog, showNotification, user, profile]);
 
   return (
     <LogContext.Provider value={{ actionLogs, addLog, undoAction, loading }}>

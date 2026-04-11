@@ -1,14 +1,16 @@
 import React, { useMemo, useState } from 'react';
-import { useSupabaseTable } from '../hooks/useSupabaseTable';
 import { InventoryItem } from '../types';
+import { useInventory } from '../context/InventoryContext';
 import { useLog } from '../context/LogContext';
 import { useAuth } from '../context/AuthContext';
 import { useDialog } from '../context/DialogContext';
 import TablePagination from './TablePagination';
 import CustomSelect from './CustomSelect';
+import SkeletonRows from './SkeletonRows';
 
 const InventoryTable: React.FC = () => {
-  const { data: inventory, loading, addRow, updateRow, deleteRow } = useSupabaseTable<InventoryItem>('inventory');
+  // Improvement #6: dùng InventoryContext thay vì useSupabaseTable riêng
+  const { inventory, loading, addRow, updateRow, deleteRow } = useInventory();
   const { addLog } = useLog();
   const { profile } = useAuth();
   const { showAlert, showConfirm } = useDialog();
@@ -17,28 +19,16 @@ const InventoryTable: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
   const [formData, setFormData] = useState<Partial<InventoryItem>>({
-    name: '',
-    unit: 'Thùng',
-    price: 0,
-    opening_qty: 0,
-    import_1: 0,
-    import_2: 0,
-    import_3: 0,
-    export_qty: 0
+    name: '', unit: 'Thùng', price: 0,
+    opening_qty: 0, import_1: 0, import_2: 0, import_3: 0, export_qty: 0
   });
 
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('vi-VN').format(amount) + 'đ';
-  };
+  const formatCurrency = (amount: number) =>
+    new Intl.NumberFormat('vi-VN').format(amount) + 'đ';
 
   const handlePriceInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawDigits = e.target.value.replace(/\D/g, '');
-    if (!rawDigits) {
-      setFormData({ ...formData, price: 0 });
-      return;
-    }
-    const numValue = parseInt(rawDigits, 10);
-    setFormData({ ...formData, price: numValue });
+    setFormData({ ...formData, price: rawDigits ? parseInt(rawDigits, 10) : 0 });
   };
 
   const calculateAmounts = () => {
@@ -46,7 +36,6 @@ const InventoryTable: React.FC = () => {
     const opening = formData.opening_qty || 0;
     const imports = (formData.import_1 || 0) + (formData.import_2 || 0) + (formData.import_3 || 0);
     const exports = formData.export_qty || 0;
-    
     return {
       openingAmount: opening * price,
       importAmount: imports * price,
@@ -56,24 +45,16 @@ const InventoryTable: React.FC = () => {
 
   const handleSave = async () => {
     if (!formData.name) return showAlert('Vui lòng nhập tên hàng!');
-    
-    // Bug #4 Fix: Dùng !== null thay vì truthy check để tránh lỗi khi id = 0
     if (editingId !== null) {
       const originalItem = inventory.find(i => i.id === editingId);
       const success = await updateRow(editingId, formData);
       if (success && originalItem) {
         addLog('Sửa hàng hoá', `Đã cập nhật thông tin cho "${formData.name}".`, 'success', 'inventory', {
-          action: 'edit',
-          tableName: 'inventory',
-          previousItem: originalItem,
-          currentItemId: editingId
+          action: 'edit', tableName: 'inventory', previousItem: originalItem, currentItemId: editingId
         });
         resetForm();
       }
     } else {
-      // For ADD, we need the new item ID to enable UNDO (DELETE)
-      // Since our addRow hook might not return the ID immediately, we'll try to find it or log without undo if too complex.
-      // Actually, Supabase insert returns the inserted data. Let's assume addRow handles it or just log it.
       const success = await addRow(formData);
       if (success) {
         addLog('Thêm hàng hoá', `Đã thêm mặt hàng "${formData.name}" vào danh sách.`, 'success', 'inventory');
@@ -84,16 +65,7 @@ const InventoryTable: React.FC = () => {
 
   const resetForm = () => {
     setEditingId(null);
-    setFormData({
-      name: '',
-      unit: 'Thùng',
-      price: 0,
-      opening_qty: 0,
-      import_1: 0,
-      import_2: 0,
-      import_3: 0,
-      export_qty: 0
-    });
+    setFormData({ name: '', unit: 'Thùng', price: 0, opening_qty: 0, import_1: 0, import_2: 0, import_3: 0, export_qty: 0 });
     setIsFormOpen(false);
   };
 
@@ -112,9 +84,7 @@ const InventoryTable: React.FC = () => {
       const success = await deleteRow(id);
       if (success && itemToDelete) {
         addLog('Xoá hàng hoá', `Đã xoá "${name}" khỏi danh sách.`, 'success', 'inventory', {
-          action: 'delete',
-          tableName: 'inventory',
-          previousItem: itemToDelete
+          action: 'delete', tableName: 'inventory', previousItem: itemToDelete
         });
       }
     }
@@ -124,8 +94,7 @@ const InventoryTable: React.FC = () => {
 
   const pagedInventory = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
-    const end = start + pageSize;
-    return inventory.slice(start, end);
+    return inventory.slice(start, start + pageSize);
   }, [inventory, currentPage]);
 
   return (
@@ -134,11 +103,8 @@ const InventoryTable: React.FC = () => {
         <div className="inline-form-head flex justify-between items-center mb-6">
           <h3>Danh mục hàng hóa</h3>
           {(profile?.role === 'owner' || profile?.role === 'dev') && (
-            <button 
-              id="showAddInventoryBtn" 
-              className="btn btn-primary btn-sm"
-              onClick={() => { setIsFormOpen(!isFormOpen); if (!isFormOpen) setEditingId(null); }}
-            >
+            <button id="showAddInventoryBtn" className="btn btn-primary btn-sm"
+              onClick={() => { setIsFormOpen(!isFormOpen); if (!isFormOpen) setEditingId(null); }}>
               {isFormOpen ? 'Đóng biểu mẫu' : '+ Thêm hàng mới'}
             </button>
           )}
@@ -147,67 +113,49 @@ const InventoryTable: React.FC = () => {
         <div id="inventoryFormContainer" className={`form-collapse-container ${!isFormOpen ? 'collapsed' : ''}`}>
           <div className="form-collapse-inner">
             <div id="inventoryForm" className="p-6 bg-slate-50/50 rounded-2xl mb-6">
-              <h4 id="inventoryFormTitle" className="font-bold mb-4">{editingId ? `Đang chỉnh sửa: ${formData.name}` : 'Thêm hàng hoá mới'}</h4>
+              <h4 id="inventoryFormTitle" className="font-bold mb-4">
+                {editingId !== null ? `Đang chỉnh sửa: ${formData.name}` : 'Thêm hàng hoá mới'}
+              </h4>
               <div className="grid-form">
                 <div className="field">
                   <label>Tên hàng</label>
-                  <input 
-                    type="text" 
-                    id="itemNameInput" 
-                    placeholder="Ví dụ: Abest Tall"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  />
+                  <input type="text" id="itemNameInput" placeholder="Ví dụ: Abest Tall"
+                    value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
                 </div>
                 <div className="field">
                   <label>ĐVT</label>
-                  <CustomSelect 
-                    value={formData.unit || ''} 
-                    options={['Thùng', 'Két', 'Chai']} 
-                    onChange={(val) => setFormData({ ...formData, unit: val })}
-                  />
+                  <CustomSelect value={formData.unit || ''} options={['Thùng', 'Két', 'Chai']}
+                    onChange={(val) => setFormData({ ...formData, unit: val })} />
                 </div>
                 <div className="field">
                   <label>Đơn giá</label>
-                  <input 
-                    type="text" 
-                    id="itemPriceInput" 
-                    placeholder="0đ"
+                  <input type="text" id="itemPriceInput" placeholder="0đ"
                     value={formData.price ? formatCurrency(formData.price) : ''}
-                    onChange={handlePriceInput}
-                  />
+                    onChange={handlePriceInput} />
                 </div>
                 <div className="field">
                   <label>Tồn đầu</label>
-                  <input 
-                    type="number" 
-                    id="itemOpeningQtyInput" 
-                    value={formData.opening_qty}
-                    onChange={(e) => setFormData({ ...formData, opening_qty: parseInt(e.target.value, 10) || 0 })}
-                  />
+                  <input type="number" id="itemOpeningQtyInput" value={formData.opening_qty}
+                    onChange={(e) => setFormData({ ...formData, opening_qty: parseInt(e.target.value, 10) || 0 })} />
                 </div>
-                <div className="field"><label>Nhập L1</label><input type="number" id="itemImport1Input" value={formData.import_1} onChange={(e) => setFormData({ ...formData, import_1: parseInt(e.target.value, 10) || 0 })} /></div>
-                <div className="field"><label>Nhập L2</label><input type="number" id="itemImport2Input" value={formData.import_2} onChange={(e) => setFormData({ ...formData, import_2: parseInt(e.target.value, 10) || 0 })} /></div>
-                <div className="field"><label>Nhập L3</label><input type="number" id="itemImport3Input" value={formData.import_3} onChange={(e) => setFormData({ ...formData, import_3: parseInt(e.target.value, 10) || 0 })} /></div>
+                <div className="field"><label>Nhập L1</label><input type="number" value={formData.import_1} onChange={(e) => setFormData({ ...formData, import_1: parseInt(e.target.value, 10) || 0 })} /></div>
+                <div className="field"><label>Nhập L2</label><input type="number" value={formData.import_2} onChange={(e) => setFormData({ ...formData, import_2: parseInt(e.target.value, 10) || 0 })} /></div>
+                <div className="field"><label>Nhập L3</label><input type="number" value={formData.import_3} onChange={(e) => setFormData({ ...formData, import_3: parseInt(e.target.value, 10) || 0 })} /></div>
                 <div className="field">
                   <label>Xuất</label>
-                  <input 
-                    type="number" 
-                    id="itemExportQtyInput" 
-                    value={formData.export_qty}
-                    onChange={(e) => setFormData({ ...formData, export_qty: parseInt(e.target.value, 10) || 0 })}
-                  />
+                  <input type="number" id="itemExportQtyInput" value={formData.export_qty}
+                    onChange={(e) => setFormData({ ...formData, export_qty: parseInt(e.target.value, 10) || 0 })} />
                 </div>
               </div>
               <div className="grid-meta mt-4 flex gap-4">
-                <div className="meta-item"><label>Tiền tồn đầu</label><input type="text" id="itemOpeningAmountInput" disabled value={formatCurrency(amounts.openingAmount)} /></div>
-                <div className="meta-item"><label>Tiền nhập</label><input type="text" id="itemImportAmountInput" disabled value={formatCurrency(amounts.importAmount)} /></div>
-                <div className="meta-item"><label>Tiền xuất</label><input type="text" id="itemExportAmountInput" disabled value={formatCurrency(amounts.exportAmount)} /></div>
+                <div className="meta-item"><label>Tiền tồn đầu</label><input type="text" disabled value={formatCurrency(amounts.openingAmount)} /></div>
+                <div className="meta-item"><label>Tiền nhập</label><input type="text" disabled value={formatCurrency(amounts.importAmount)} /></div>
+                <div className="meta-item"><label>Tiền xuất</label><input type="text" disabled value={formatCurrency(amounts.exportAmount)} /></div>
               </div>
               <div className="flex justify-end gap-3 mt-6">
                 <button id="cancelEditBtn" className="btn btn-outline" onClick={resetForm}>Huỷ bỏ</button>
                 <button id="addInventoryItemBtn" className="btn btn-primary" onClick={handleSave}>
-                  {editingId ? 'Cập nhật hàng hoá' : 'Lưu hàng hoá'}
+                  {editingId !== null ? 'Cập nhật hàng hoá' : 'Lưu hàng hoá'}
                 </button>
               </div>
             </div>
@@ -224,12 +172,13 @@ const InventoryTable: React.FC = () => {
               </tr>
             </thead>
             <tbody id="inventoryTableBody" key={currentPage} className="table-animate">
+              {/* Improvement #10: Skeleton loading thay vì văn bản "Đang tải..." */}
               {loading ? (
-                <tr><td colSpan={15} className="text-center p-10">Đang tải dữ liệu...</td></tr>
+                <SkeletonRows cols={15} rows={5} />
               ) : inventory.length === 0 ? (
                 <tr><td colSpan={15} className="text-center p-10">Chưa có dữ liệu hàng hoá.</td></tr>
               ) : (
-              pagedInventory.map((item, index) => {
+                pagedInventory.map((item, index) => {
                   const imports = item.import_1 + item.import_2 + item.import_3;
                   const closingQty = item.opening_qty + imports - item.export_qty;
                   return (
@@ -262,12 +211,7 @@ const InventoryTable: React.FC = () => {
               )}
             </tbody>
           </table>
-          <TablePagination
-            totalItems={inventory.length}
-            pageSize={pageSize}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-          />
+          <TablePagination totalItems={inventory.length} pageSize={pageSize} currentPage={currentPage} onPageChange={setCurrentPage} />
         </div>
       </div>
     </div>
