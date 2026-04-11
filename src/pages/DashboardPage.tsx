@@ -83,11 +83,13 @@ const DashboardPage: React.FC = () => {
               <ActionLog tableName="inventory" />
             </TabsContent>
             <TabsContent value="sales" transition={{ duration: 0.5, ease: 'easeInOut' }}>
-              <SalesTable data={sales} loading={salesLoading} />
+              {/* Bug #5 Fix: Không truyền props data/loading xuống — SalesTable tự quản lý dữ liệu của mình */}
+              <SalesTable />
               <ActionLog tableName="sales" />
             </TabsContent>
             <TabsContent value="debt" transition={{ duration: 0.5, ease: 'easeInOut' }}>
-              <DebtsTable data={debts} loading={debtsLoading} />
+              {/* Bug #5 Fix: Không truyền props data/loading xuống — DebtsTable tự quản lý dữ liệu của mình */}
+              <DebtsTable />
               <ActionLog tableName="debts" />
             </TabsContent>
             <TabsContent value="cashbook" transition={{ duration: 0.5, ease: 'easeInOut' }}>

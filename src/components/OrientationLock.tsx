@@ -8,21 +8,19 @@ const OrientationLock: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Bug #13 Fix: Tạo MediaQuery một lần, tái sử dụng để cả checkState và addEventListener
+    const mQuery = window.matchMedia("(max-width: 1024px) and (pointer: coarse)");
+    const pQuery = window.matchMedia("(orientation: portrait)");
+
     const checkState = () => {
-      const mobileQuery = window.matchMedia("(max-width: 1024px) and (pointer: coarse)");
-      const portraitQuery = window.matchMedia("(orientation: portrait)");
-      
-      setIsMobile(mobileQuery.matches);
-      setIsPortrait(portraitQuery.matches);
+      setIsMobile(mQuery.matches);
+      setIsPortrait(pQuery.matches);
     };
 
     checkState();
 
     const portraitListener = (e: MediaQueryListEvent) => setIsPortrait(e.matches);
     const mobileListener = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-
-    const mQuery = window.matchMedia("(max-width: 1024px) and (pointer: coarse)");
-    const pQuery = window.matchMedia("(orientation: portrait)");
 
     pQuery.addEventListener('change', portraitListener);
     mQuery.addEventListener('change', mobileListener);

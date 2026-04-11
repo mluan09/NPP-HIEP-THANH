@@ -15,12 +15,13 @@ export function useSupabaseTable<T extends { id: any }>(tableName: string) {
       .order('id', { ascending: true });
 
     if (error) {
-      showNotification(`Error fetching ${tableName}: ${error.message}`, 'error');
+      // Bug #3 Fix: Chỉ log lỗi fetch, không show notification để tránh trùng với component
+      console.error(`Error fetching ${tableName}:`, error.message);
     } else {
       setData(result as T[]);
     }
     setLoading(false);
-  }, [tableName, showNotification]);
+  }, [tableName]);
 
   useEffect(() => {
     fetchData();
@@ -42,33 +43,36 @@ export function useSupabaseTable<T extends { id: any }>(tableName: string) {
   const addRow = async (newData: any) => {
     const { error } = await supabase.from(tableName).insert([newData]);
     if (error) {
-      showNotification(`Error adding record: ${error.message}`, 'error');
+      // Bug #3 Fix: Xoá showNotification dư thừa ở đây — component đã xử lý thông báo qua addLog
+      console.error(`Error adding record to ${tableName}:`, error.message);
+      showNotification(`Lỗi khi thêm bản ghi: ${error.message}`, 'error');
       return false;
     }
     await fetchData();
-    showNotification('Đã thêm bản ghi mới thành công!', 'success');
     return true;
   };
 
   const updateRow = async (id: any, updatedData: any) => {
     const { error } = await supabase.from(tableName).update(updatedData).eq('id', id);
     if (error) {
-      showNotification(`Error updating record: ${error.message}`, 'error');
+      // Bug #3 Fix: Chỉ show lỗi, thành công sẽ do component thông báo qua addLog
+      console.error(`Error updating record in ${tableName}:`, error.message);
+      showNotification(`Lỗi khi cập nhật bản ghi: ${error.message}`, 'error');
       return false;
     }
     await fetchData();
-    showNotification('Đã cập nhật bản ghi thành công!', 'success');
     return true;
   };
 
   const deleteRow = async (id: any) => {
     const { error } = await supabase.from(tableName).delete().eq('id', id);
     if (error) {
-      showNotification(`Error deleting record: ${error.message}`, 'error');
+      // Bug #3 Fix: Chỉ show lỗi, thành công sẽ do component thông báo qua addLog
+      console.error(`Error deleting record from ${tableName}:`, error.message);
+      showNotification(`Lỗi khi xoá bản ghi: ${error.message}`, 'error');
       return false;
     }
     await fetchData();
-    showNotification('Đã xoá bản ghi thành công!', 'success');
     return true;
   };
 

@@ -6,9 +6,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, Bug, Mail, MessageCircle, ChevronDown } from 'lucide-react';
 import { contactConfig } from '../config/contact';
 
+// Bug #11 Fix: Dùng type rõ ràng thay vì any
+type TabId = 'inventory' | 'sales' | 'debt' | 'cashbook';
+
 interface TopNavbarProps {
-  activeTab: any;
-  setActiveTab: (tab: any) => void;
+  activeTab: TabId;
+  setActiveTab: (tab: TabId) => void;
   mobileMenuOpen: boolean;
   setMobileMenuOpen: (open: boolean) => void;
 }
@@ -44,15 +47,20 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ activeTab, setActiveTab, mobileMe
   }, [activeTab, mobileMenuOpen]);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setDropdownOpen(false);
       }
     };
     if (dropdownOpen) {
+      // Bug #9 Fix: Thêm cả touchstart để dropdown đóng khi chạm ngoài trên mobile
       document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
     }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
   }, [dropdownOpen]);
 
   const handleLogout = async () => {
@@ -86,7 +94,8 @@ const TopNavbar: React.FC<TopNavbarProps> = ({ activeTab, setActiveTab, mobileMe
     }, 800);
   };
 
-  const navItems = [
+  // Bug #11 Fix: Type navItems.id là TabId để setActiveTab không bị lỗi TypeScript
+  const navItems: { id: TabId; label: string }[] = [
     { id: 'inventory', label: 'Kho hàng' },
     { id: 'sales', label: 'BC Bán Hàng' },
     { id: 'debt', label: 'Công nợ' },

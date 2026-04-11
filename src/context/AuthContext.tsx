@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { UserProfile } from '../types';
 
@@ -18,15 +18,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Bug #12 Fix: await fetchProfile trước khi setLoading(false)
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setUser(session?.user ?? null);
-      if (session?.user) fetchProfile(session.user.id);
+      if (session?.user) await fetchProfile(session.user.id, session.user.email);
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setUser(session?.user ?? null);
-      if (session?.user) fetchProfile(session.user.id);
+      if (session?.user) await fetchProfile(session.user.id, session.user.email);
       else setProfile(null);
       setLoading(false);
     });
@@ -34,13 +35,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchProfile = async (userId: string) => {
-    // For now, if no profile table exists, create a mock profile
+  // Bug #1 Fix: nhận email qua tham số để tránh race condition với state `user`
+  // Bug #1 Fix: role mặc định là 'ctv' thay vì 'owner' để tránh leo thang đặc quyền
+  const fetchProfile = async (userId: string, userEmail?: string) => {
     const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
-    if (data) setProfile(data);
-    else {
-      // Stub profile if table is missing or doesn't have the user
-      setProfile({ id: userId, email: user?.email ?? '', name: 'Người dùng', role: 'owner' });
+    if (data) {
+      setProfile(data);
+    } else {
+      // Stub profile với role an toàn nhất — 'ctv', không phải 'owner'
+      console.warn('Profile not found, using stub. Error:', error?.message);
+      setProfile({ id: userId, email: userEmail ?? '', name: 'Người dùng', role: 'ctv' });
     }
   };
 

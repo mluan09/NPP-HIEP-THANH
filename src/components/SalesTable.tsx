@@ -6,6 +6,8 @@ import { useAuth } from '../context/AuthContext';
 import { useLog } from '../context/LogContext';
 import { useDialog } from '../context/DialogContext';
 
+// Bug #5 Fix: Props dữ liệu không còn cần thiết (Dashboard không truyền xuống nữa)
+// Giữ lại interface để backward compatible nếu cần dùng lại
 interface SalesTableProps {
   data?: DailySaleRow[];
   loading?: boolean;
@@ -17,7 +19,8 @@ const SalesTable: React.FC<SalesTableProps> = ({ data: propData, loading: propLo
   const { addLog } = useLog();
   const { showAlert, showConfirm } = useDialog();
   
-  const sales = propData || hookData;
+  // Bug #14 Fix: Dùng !== undefined thay vì || để tránh fallback khi propData là mảng rỗng []
+  const sales = propData !== undefined ? propData : hookData;
   const loading = propLoading !== undefined ? propLoading : hookLoading;
   
   const [isFormOpen, setIsFormOpen] = useState(false);

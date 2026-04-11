@@ -72,13 +72,21 @@ const CashbookTable: React.FC = () => {
   };
 
   const startEdit = (item: CashbookRow) => {
+    // Bug #8 Fix: Kiểm tra quyền trước khi sửa (giống InventoryTable và DebtsTable)
+    if (profile?.role !== 'owner' && profile?.role !== 'dev' && item.created_by !== profile?.id) {
+      return showAlert('Bạn không có quyền sửa mục này.');
+    }
     setEditingId(item.id);
     setFormData(item);
     setIsFormOpen(true);
   };
 
   const handleDelete = async (id: number, description: string) => {
+    // Bug #8 Fix: Kiểm tra quyền trước khi xoá (giống InventoryTable và DebtsTable)
     const itemToDelete = cashbook.find(i => i.id === id);
+    if (profile?.role !== 'owner' && profile?.role !== 'dev' && itemToDelete?.created_by !== profile?.id) {
+      return showAlert('Bạn không có quyền xoá mục này.');
+    }
     const confirmed = await showConfirm(`Bạn có chắc chắn muốn xoá mục "${description}" không?`);
     if (confirmed) {
       const success = await deleteRow(id);

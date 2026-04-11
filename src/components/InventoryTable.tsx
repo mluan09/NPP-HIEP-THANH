@@ -57,7 +57,8 @@ const InventoryTable: React.FC = () => {
   const handleSave = async () => {
     if (!formData.name) return showAlert('Vui lòng nhập tên hàng!');
     
-    if (editingId) {
+    // Bug #4 Fix: Dùng !== null thay vì truthy check để tránh lỗi khi id = 0
+    if (editingId !== null) {
       const originalItem = inventory.find(i => i.id === editingId);
       const success = await updateRow(editingId, formData);
       if (success && originalItem) {
@@ -136,7 +137,7 @@ const InventoryTable: React.FC = () => {
             <button 
               id="showAddInventoryBtn" 
               className="btn btn-primary btn-sm"
-              onClick={() => { setIsFormOpen(!isFormOpen); if(!isFormOpen) setEditingId(null); }}
+              onClick={() => { setIsFormOpen(!isFormOpen); if (!isFormOpen) setEditingId(null); }}
             >
               {isFormOpen ? 'Đóng biểu mẫu' : '+ Thêm hàng mới'}
             </button>

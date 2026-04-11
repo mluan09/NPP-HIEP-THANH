@@ -17,7 +17,10 @@ const DebtsTable: React.FC<DebtsTableProps> = ({ data: propData, loading: propLo
   const { addLog } = useLog();
   const { showAlert, showConfirm } = useDialog();
   
-  const debts = propData || hookData;
+// Bug #5 Fix: Props dữ liệu không còn cần thiết (Dashboard không truyền xuống nữa)
+// Giữ lại interface để backward compatible nếu cần dùng lại
+  const debts = propData !== undefined ? propData : hookData;
+  // Bug #14 Fix: Dùng !== undefined thay vì || cho loading
   const loading = propLoading !== undefined ? propLoading : hookLoading;
   
   const [isFormOpen, setIsFormOpen] = useState(false);
